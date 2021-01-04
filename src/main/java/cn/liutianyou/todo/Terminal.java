@@ -1,10 +1,12 @@
 package cn.liutianyou.todo;
 
 import cn.liutianyou.todo.commander.BaseCommander;
+import cn.liutianyou.todo.exception.CommonException;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.MissingCommandException;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -30,9 +32,21 @@ public class Terminal {
             System.out.print(">");
             String s = scanner.nextLine();
             String[] strings = prevDeal(s);
+            String[] removeProgramName = new String[strings.length-1];
+            if(strings.length==1&&strings[0].trim().equals("")){
+                continue;
+            }
+            if(!strings[0].trim().equals("todo")){
+                throw  new CommonException("Please enter the application name at the beginning of the command");
+            }else{
+                System.arraycopy(strings,1,removeProgramName,0,strings.length-1);
+            }
             try {
-                jc.parse(strings);
+                jc.parse(removeProgramName);
                 run(jc);
+
+            }catch (CommonException commonException){
+                System.out.println("- "+commonException.getMessage());
             } catch (MissingCommandException missingCommandException) {
                 System.out.println("Unsupported command\"" + missingCommandException.getUnknownCommand() + "\"");
             } catch (com.beust.jcommander.ParameterException parameterException) {
