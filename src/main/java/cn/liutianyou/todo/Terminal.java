@@ -2,6 +2,7 @@ package cn.liutianyou.todo;
 
 import cn.liutianyou.todo.commander.BaseCommander;
 import cn.liutianyou.todo.exception.CommonException;
+import cn.liutianyou.todo.util.Util;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.MissingCommandException;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ public class Terminal {
         }
         Scanner scanner = new Scanner(System.in);
         while (true) {
+            try {
             System.out.print(">");
             String s = scanner.nextLine();
             String[] strings = prevDeal(s);
@@ -41,19 +43,15 @@ public class Terminal {
             }else{
                 System.arraycopy(strings,1,removeProgramName,0,strings.length-1);
             }
-            try {
                 jc.parse(removeProgramName);
                 run(jc);
 
             }catch (CommonException commonException){
                 System.out.println("- "+commonException.getMessage());
             } catch (MissingCommandException missingCommandException) {
-                System.out.println("Unsupported command\"" + missingCommandException.getUnknownCommand() + "\"");
+                System.out.println("- Unsupported command\"" + missingCommandException.getUnknownCommand() + "\"");
             } catch (com.beust.jcommander.ParameterException parameterException) {
-                System.out.println("不支持的参数\"" + parameterException.getLocalizedMessage() + "\"");
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("未找到命令");
+                System.out.println("- Command '"+jc.getParsedCommand()+"' does not support parameter '"+Util.pareFromParameterException(parameterException)+"'");
             }
 
         }

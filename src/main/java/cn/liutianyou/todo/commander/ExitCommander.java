@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ExitCommander implements BaseCommander {
+
+
     @Override
     public void process(JCommander jCommander) {
         System.out.println("Bye!");
